@@ -5,13 +5,14 @@ from exceptions import BadInputException
 
 class CookieFileParser():
     @staticmethod
-    def parse(filename: str):
+    def parse(filename: str) -> dict:
         cookie_daily_usages = defaultdict(lambda: defaultdict(int))
 
         with open(filename) as fp:
             headers = fp.readline().strip().split(',')
             if len(headers) != 2:
                 raise BadInputException('Input file should include 2 columns of data')
+            # When cookie and timestamp might be in any arbitrary columns, find the column for each one
             try:
                 cookie_index = headers.index('cookie')
                 timestamp_index = headers.index('timestamp')
@@ -19,8 +20,7 @@ class CookieFileParser():
                 raise BadInputException('Column names for input file should include "cookie" and "timestamp".')
             
             for line in fp:
-                line = line.strip()
-                columns = line.split(',')
+                columns = line.strip().split(',')
                 if len(columns) != 2:
                     raise BadInputException('Malformed input file. It should have 2 comma-separated columns for cookie and timestamp.')
                 cookie = columns[cookie_index]

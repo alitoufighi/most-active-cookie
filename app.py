@@ -12,6 +12,7 @@ class MostActiveCookieApp():
         if not self.parsed_cookies[requested_date]:
             logger.debug(f'Parsed cookies do not have the date {requested_date}')
             raise BadInputException('This date does not exist in the cookie database')
+        # Find `parsed_cookies` with maximum number of occurrences in the `requested_date`
         top_used_cookies = []
         max_value = 0
         for cookie, count in self.parsed_cookies[requested_date].items():
