@@ -1,4 +1,4 @@
-import logging
+from logger import logger
 from datetime import datetime
 from collections import defaultdict
 from exceptions import BadInputException
@@ -25,7 +25,7 @@ class CookieFileParser():
                     raise BadInputException('Malformed input file. It should have 2 comma-separated columns for cookie and timestamp.')
                 cookie = columns[cookie_index]
                 timestamp = columns[timestamp_index]
-                logging.debug(f'Read row from csv: cookie={timestamp} timestamp={timestamp}')
+                logger.debug(f'Read row from csv: cookie={timestamp} timestamp={timestamp}')
                 usage_date = datetime.fromisoformat(timestamp).date()
                 cookie_daily_usages[usage_date][cookie] += 1
         return cookie_daily_usages
