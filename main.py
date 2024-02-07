@@ -1,4 +1,5 @@
 import logging
+from argparse import ArgumentParser
 from datetime import date, datetime
 from collections import defaultdict
 
@@ -31,19 +32,33 @@ class CookieFileParser():
 
 
 class MostActiveCookieApp():
-    def __init__(self, filename: str, desired_date: date):
+    def __init__(self, filename: str, ):
         self.filename = filename
-        self.desired_date = desired_date
         self.cookie_parser = CookieFileParser(filename)
         self.parsed_cookies = self.cookie_parser.parse()
     
-    def get_top_used_cookie(self):
-        if not self.parsed_cookies[self.desired_date]:
+    def get_top_used_cookie(self, desired_date: date):
+        if not self.parsed_cookies[desired_date]:
             raise ValueError('This date does not exist in the cookie database')
-        return max(self.parsed_cookies[self.desired_date], key=self.parsed_cookies[self.desired_date].get)
+        # return max(self.parsed_cookies[desired_date], key=self.parsed_cookies[desired_date].get)
+        top_used_cookies = []
+        max_value = 0
+        for cookie, count in self.parsed_cookies[desired_date].items():
+            if count > max_value:
+                max_value = count
+                top_used_cookies = [cookie]
+            elif count == max_value:
+                top_used_cookies.append(cookie)
+        return top_used_cookies
     
 
 
 if __name__ == '__main__':
-    app = MostActiveCookieApp('input.txt', date.fromisoformat('2018-12-09'))
-    print(app.get_top_used_cookie())
+    parser = ArgumentParser(description='Finds the most active cookie!')
+    parser.add_argument('-f', dest='filename', required=True)
+    parser.add_argument('-d', dest='date', required=True, type=date.fromisoformat, help='Asking date in ISO format')
+    args = parser.parse_args()
+    print(args.filename, args.date)
+    
+    app = MostActiveCookieApp(args.filename)
+    print('\n'.join(app.get_top_used_cookie(args.date)))
