@@ -26,6 +26,9 @@ class CookieFileParser():
                 cookie = columns[cookie_index]
                 timestamp = columns[timestamp_index]
                 logger.debug(f'Read row from csv: cookie={timestamp} timestamp={timestamp}')
-                usage_date = datetime.fromisoformat(timestamp).date()
+                try:
+                    usage_date = datetime.fromisoformat(timestamp).date()
+                except ValueError:
+                    raise BadInputException('Timestamp value is not in ISO format')
                 cookie_daily_usages[usage_date][cookie] += 1
         return cookie_daily_usages
