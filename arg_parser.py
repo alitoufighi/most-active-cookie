@@ -1,16 +1,17 @@
+import os
+import argparse
 from logger import logger
 from os.path import isfile, exists
-import argparse
 from datetime import date
 from exceptions import BadInputException
 
 def accessible_file(filename):
     logger.debug(f'Passed filename={filename}')
-    if not exists(filename):
+    if not exists(filename) or not isfile(filename):
         logger.debug(f'Input file does not exist')
         raise BadInputException("Input file does not exist in the provided path")
-    if not isfile(filename):
-        logger.debug(f'Input file validation on {filename} failed')
+    if not os.access(filename, os.R_OK):
+        logger.debug(f'Input file is not accessible')
         raise BadInputException("Cannnt read a file from the provided path")
     return filename
 
