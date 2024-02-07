@@ -1,0 +1,33 @@
+from logger import logger
+from os.path import isfile, exists
+import argparse
+from datetime import date
+from exceptions import BadInputException
+
+def accessible_file(filename):
+    logger.debug(f'Passed filename={filename}')
+    if not exists(filename):
+        logger.debug(f'Input file does not exist')
+        raise BadInputException("Input file does not exist in the provided path")
+    if not isfile(filename):
+        logger.debug(f'Input file validation on {filename} failed')
+        raise BadInputException("Cannnt read a file from the provided path")
+    return filename
+
+def iso_format_date(date_str):
+    logger.debug(f'Passed date string={date_str}')
+    try:
+        iso_date = date.fromisoformat(date_str)
+    except ValueError as e:
+        raise BadInputException(e)
+    return iso_date
+
+class ArgumentParser():
+    @staticmethod
+    def read_args():
+        parser = argparse.ArgumentParser(description='Finds the most active cookie(s)!')
+        parser.add_argument('-f', dest='filename', required=True, type=accessible_file, help='Path to a CSV file')
+        parser.add_argument('-d', dest='date', required=True, type=iso_format_date, help='Requested date in ISO format')
+        args = parser.parse_args()
+        logger.debug(f'Parsed args: {args}')
+        return args
